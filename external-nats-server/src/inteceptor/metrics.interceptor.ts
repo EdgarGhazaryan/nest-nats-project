@@ -5,23 +5,23 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable, tap } from 'rxjs';
-import { Counter, Gauge } from 'prom-client';
+import { Counter, Histogram } from 'prom-client';
 
 @Injectable()
 export class MetricsInterceptor implements NestInterceptor {
   private totalRequestCounter: Counter;
-  private requestDuration: Gauge;
+  private requestDuration: Histogram;
 
   constructor() {
     this.totalRequestCounter = new Counter({
-      name: 'total_requests',
+      name: 'total_requests_count',
       help: 'Total number of requests',
       labelNames: ['total'],
     });
 
-    this.requestDuration = new Gauge({
+    this.requestDuration = new Histogram({
       name: 'request_duration',
-      help: 'Duration of requests',
+      help: 'Duration of NATS requests in seconds',
       labelNames: ['duration'],
     });
   }
@@ -34,8 +34,7 @@ export class MetricsInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const duration = Date.now() - start;
-
-        this.requestDuration.set(duration);
+        this.requestDuration.observe(duration);
       }),
     );
   }
