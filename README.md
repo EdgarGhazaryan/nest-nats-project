@@ -29,13 +29,13 @@ Development mode
 $ cd external-nats-server
 $ npm run start:dev
 $ cd ../server
-$ npm run start:prod
+$ npm run start:dev
 ```
 
 Production mode
 ```bash
 $ cd external-nats-server
-$ npm run start:dev
+$ npm run start:prod
 $ cd ../server
 $ npm run start:prod
 ```
